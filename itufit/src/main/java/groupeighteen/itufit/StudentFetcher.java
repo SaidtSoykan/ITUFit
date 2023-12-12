@@ -6,17 +6,14 @@ import java.sql.SQLException;
 public class StudentFetcher {
 
     public static Student fetchStudent(Connection connection, String username, String password) {
-        // SQL sorgusu
         String sql = "SELECT * FROM students WHERE username = ? AND password = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            // Parametreleri ayarla
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, password);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    // Veritabanından alınan verilerle Student nesnesi oluştur
                     Student student = new Student();
                     student.setStudentId(resultSet.getInt("student_id"));
                     student.setName(resultSet.getString("name"));
@@ -28,7 +25,6 @@ public class StudentFetcher {
                     student.setEmail(resultSet.getString("email"));
                     student.setWeight(resultSet.getDouble("weight"));
                     student.setGoalWeight(resultSet.getDouble("goal_weight"));
-
                     return student;
                 }
             }
@@ -37,6 +33,6 @@ public class StudentFetcher {
             e.printStackTrace();
         }
 
-        return null; // Kullanıcı bulunamazsa null döndür
+        return null; 
     }
 }
