@@ -18,29 +18,43 @@ public class WeeklyExerciseProgram {
         this.programDate = programDate;
         this.programFinishDate = programFinishDate;
         this.studentId = studentId;
-        this.totalCalories = calculateWeeklyCalories(); // Haftalık kaloriler
+        this.totalCalories = calculateWeeklyCalories(); 
     }
 
-    private int calculateWeeklyCalories() {
+private void fetchWeeklyExerciseProgramDetails() {
+    Connection connection = DatabaseConnector.getConnection();
+    String caloriesSql = "SELECT SUM(calories) AS total_calories FROM meal WHERE menu_date BETWEEN ? AND ?";
+    String programSql = "SELECT program_id, reservation_id, program_date, program_finish_date, student_id FROM weekly_exercise_program WHERE program_id = ?";
 
-        Connection connection = DatabaseConnector.getConnection();
-        String sql = "SELECT SUM(calories) AS total_calories FROM meal WHERE menu_date BETWEEN ? AND ?";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            
-            preparedStatement.setDate(1, java.sql.Date.valueOf(programDate));
-            preparedStatement.setDate(2, java.sql.Date.valueOf(programFinishDate));
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    
-                    return resultSet.getInt("total_calories");
+    try {
+        try (PreparedStatement caloriesStatement = connection.prepareStatement(caloriesSql)) {
+            caloriesStatement.setDate(1, java.sql.Date.valueOf(programDate));
+            caloriesStatement.setDate(2, java.sql.Date.valueOf(programFinishDate));
+            try (ResultSet caloriesResultSet = caloriesStatement.executeQuery()) {
+                if (caloriesResultSet.next()) {
+                    totalCalories = caloriesResultSet.getInt("total_calories");
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return 0; 
+        try (PreparedStatement programStatement = connection.prepareStatement(programSql)) {
+            programStatement.setInt(1, programId); 
+            try (ResultSet programResultSet = programStatement.executeQuery()) {
+                if (programResultSet.next()) {
+                    programId = programResultSet.getInt("program_id");
+                    reservationId = programResultSet.getInt("reservation_id");
+                    programDate = programResultSet.getDate("program_date").toLocalDate();
+                    programFinishDate = programResultSet.getDate("program_finish_date").toLocalDate();
+                    studentId = programResultSet.getInt("student_id");
+                }
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+}
+
+
 
     public int getTotalCalories() {
         return totalCalories;
