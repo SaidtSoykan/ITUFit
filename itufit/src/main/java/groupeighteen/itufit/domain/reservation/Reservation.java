@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +19,9 @@ public class Reservation {
     private Long id;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private Long userId; // toDO: Check if the user id type is correctly defined
-    private Long facilityId; // toDO: Check if the facility id type is correctly defined
+    //private Long userId; // toDO: Check if the user id type is correctly defined
+    @OneToMany
+    private User user;
+    @OneToMany
+    private Facility facility; // toDO: Check if the facility id type is correctly defined
 }

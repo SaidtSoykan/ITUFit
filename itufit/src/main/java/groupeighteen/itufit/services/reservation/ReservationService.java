@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ReservationService {
     private ReservationRepository reservationRepository;
-    
+    // private FacilityService facilityService;
     public ReservationService(ReservationRepository reservationRepository){
         this.reservationRepository = reservationRepository;
     }
@@ -19,7 +19,9 @@ public class ReservationService {
             throw new Exception("");
         
         // toDo: below 300 should be the capacity of the relevant facility. Add it properly
+
         if(reservations.size() >= 300)
+        // var capacity = facilityService.getById(reservation.facility.id).capacity;
             throw new Exception("");
         
         // toDo: check if the user is banned and prevent if so
