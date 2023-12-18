@@ -2,6 +2,7 @@ package groupeighteen.itufit.webapi;
 
 import groupeighteen.itufit.application.services.user.student.login.StudentLoginRequest;
 import groupeighteen.itufit.application.services.user.student.login.StudentLoginResponse;
+import groupeighteen.itufit.application.services.user.student.physicalinfo.StudentSetPhysicalInfoRequest;
 import groupeighteen.itufit.application.services.user.student.register.StudentRegisterRequest;
 import groupeighteen.itufit.application.services.user.student.StudentService;
 import groupeighteen.itufit.application.shared.response.IDataResponse;
@@ -24,7 +25,12 @@ public class StudentController {
     }
 
     @PostMapping(value = "register", produces = "application/json")
-    public IResponse register(@RequestBody StudentRegisterRequest studentRegisterRequest) throws Exception {
+    public IResponse register(@RequestBody StudentRegisterRequest studentRegisterRequest){
         return studentService.register(studentRegisterRequest);
+    }
+
+    @PostMapping(value = "physicalinfo", produces = "application/json")
+    public IResponse setPhysicalInfo(@RequestBody StudentSetPhysicalInfoRequest studentSetPhysicalInfoRequest){
+        return studentService.setPhysicalInfo(studentSetPhysicalInfoRequest);
     }
 }

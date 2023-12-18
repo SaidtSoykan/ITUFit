@@ -7,6 +7,6 @@ import groupeighteen.itufit.application.shared.response.IDataResponse;
 import groupeighteen.itufit.application.shared.response.IResponse;
 
 public interface AdminService {
-    IResponse register(AdminRegisterRequest adminRegisterRequest) throws Exception;
-    IDataResponse<AdminLoginResponse> login(AdminLoginRequest adminLoginRequest) throws Exception;
+    IResponse register(AdminRegisterRequest adminRegisterRequest);
+    IDataResponse<AdminLoginResponse> login(AdminLoginRequest adminLoginRequest);
 }
