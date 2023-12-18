@@ -1,6 +1,6 @@
 package groupeighteen.itufit.application.security;
 
-import groupeighteen.itufit.application.services.user.UserService;
+import groupeighteen.itufit.application.services.user.student.StudentServiceImp;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,9 +25,9 @@ public class SecurityConfig {
     private JwtAuthFilter authFilter;
     private UserDetailsService userDetailsService;
 
-    public SecurityConfig(JwtAuthFilter authFilter, UserService userService) {
+    public SecurityConfig(JwtAuthFilter authFilter, StudentServiceImp userServiceImp) {
         this.authFilter = authFilter;
-        this.userDetailsService = userService;
+        this.userDetailsService = userServiceImp;
     }
 
     // Configuring HttpSecurity
@@ -36,7 +36,7 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/token/**").permitAll()
+                        .requestMatchers("**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

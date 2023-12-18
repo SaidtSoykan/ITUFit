@@ -1,7 +1,9 @@
 package groupeighteen.itufit.domain.user;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +14,10 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "userr")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +26,8 @@ public class User implements UserDetails {
     private String lastName;
     private String email;
     private String userName;
-    private byte[] password123;
+    private byte[] passwordHash;
+    private byte[] passwordSalt;
     @Transient
     private List<GrantedAuthority> authorities;
 
@@ -36,7 +43,7 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword(){
-        return "asdasd";
+        return "";
     }
 
     @Override

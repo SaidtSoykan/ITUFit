@@ -17,7 +17,8 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    public static final String SECRET = "supersecretkeysupersecretkeysupersecretkeysupersecretkey";
+    public static final String SECRET = "supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123";
+
     public String generateToken(String userName) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userName);
@@ -33,7 +34,7 @@ public class JwtService {
     }
 
     private Key getSignKey() {
-        byte[] keyBytes= Decoders.BASE64.decode(SECRET);
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
