@@ -18,6 +18,6 @@ public class Facility{
     private Integer capacity;
     private String description;
     private String location;
-    @OneToMany
+    @OneToMany(mappedBy = "facility")
     private List<Reservation> reservations;
 }

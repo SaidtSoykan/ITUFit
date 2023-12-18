@@ -19,7 +19,7 @@ public class Reservation {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     //private Long userId; // toDO: Check if the user id type is correctly defined
-    @ManyToOne
+    @ManyToOne()
     private Student student;
     @ManyToOne
     private Facility facility; // toDO: Check if the facility id type is correctly defined
