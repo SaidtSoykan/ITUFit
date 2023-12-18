@@ -1,4 +1,4 @@
-package groupeighteen.itufit.application.services.reservation;
+package groupeighteen.itufit.application.services.reservation.sessionAvailable;
 
 import java.time.LocalDateTime;
 
@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ReservationSessionAvailable {
+public class ReservationSessionAvailableRequest {
     private Long facilityId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;

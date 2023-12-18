@@ -13,9 +13,11 @@ import groupeighteen.itufit.application.shared.response.DataResponse;
 import groupeighteen.itufit.application.shared.response.IResponse;
 import groupeighteen.itufit.application.shared.response.Response;
 import groupeighteen.itufit.domain.reservation.Reservation;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class ReservationServiceImp implements ReservationService {
     private ReservationRepository reservationRepository;
     private FacilityService facilityService;
@@ -27,25 +29,25 @@ public class ReservationServiceImp implements ReservationService {
         // this.studentService = studentService;
     }
 
-    public DataResponse<Boolean> make(ReservationMakeRequest reservationMakeRequest) throws Exception{
+    public DataResponse<Boolean> make(ReservationMakeRequest reservationMakeRequest){
 
         List<Reservation> reservations = reservationRepository.findByStartTimeAndFacilityId(reservationMakeRequest.getStartTime(), reservationMakeRequest.getFacilityId());
         if(reservations.isEmpty())
-            throw new Exception("");
+            throw new RuntimeException("");
         
         Integer capacity = facilityService.findById(reservationMakeRequest.getFacilityId()).getCapacity();
         if(reservations.size() >= capacity)
-            throw new Exception("");
+            throw new RuntimeException("");
         
         Boolean userIsRestricted = studentService.findById(reservationMakeRequest.getUserId()).isRestricted();
         if(userIsRestricted)
-            throw new Exception("");
+            throw new RuntimeException("");
         
         Reservation reservationToMake = new Reservation();
         reservationToMake.setStartTime(reservationMakeRequest.getStartTime());
         reservationToMake.setEndTime(reservationMakeRequest.getEndTime());
         reservationToMake.setFacility(facilityService.findById(reservationMakeRequest.getFacilityId()));
-        reservationToMake.setUser(studentService.findById(reservationMakeRequest.getUserId()));
+        reservationToMake.setStudent(studentService.findById(reservationMakeRequest.getUserId()));
 
         reservationRepository.save(reservationToMake);
         var response = new DataResponse<Boolean>(
@@ -56,11 +58,11 @@ public class ReservationServiceImp implements ReservationService {
         return response;
     }
 
-    public IResponse delete(ReservationDeleteRequest reservationDeleteRequest) throws Exception{
+    public IResponse delete(ReservationDeleteRequest reservationDeleteRequest){
 
         var optionalReservation = reservationRepository.findById(reservationDeleteRequest.getId());
         if(optionalReservation.isEmpty())
-            throw new Exception("");
+            throw new RuntimeException("");
         
         Reservation reservationToDelete = optionalReservation.get(); 
         reservationRepository.delete(reservationToDelete);
@@ -68,10 +70,10 @@ public class ReservationServiceImp implements ReservationService {
         return new Response<>(true, "");
     }
     
-    public IResponse edit(ReservationEditRequest reservationEditRequest) throws Exception{
+    public IResponse edit(ReservationEditRequest reservationEditRequest){
         var optionalReservation = reservationRepository.findById(reservationEditRequest.getOldId());
         if(optionalReservation.isEmpty())
-            throw new Exception("");
+            throw new RuntimeException("");
 
         ReservationDeleteRequest reservationDeleteRequest = new ReservationDeleteRequest();
         reservationDeleteRequest.setId(reservationEditRequest.getOldId());
@@ -88,16 +90,16 @@ public class ReservationServiceImp implements ReservationService {
         return new Response<>(true, "");
     }
 
-    public DataResponse<ReservationSessionAvailableResponse> sessionAvailable(ReservationSessionAvailableRequest reservationSessionAvailableRequest) throws Exception{
+    public DataResponse<ReservationSessionAvailableResponse> sessionAvailable(ReservationSessionAvailableRequest reservationSessionAvailableRequest){
         List<Reservation> reservations = reservationRepository.findByStartTimeAndFacilityId(reservationSessionAvailableRequest.getStartTime(), reservationSessionAvailableRequest.getFacilityId());
         if(reservations.isEmpty())
-            throw new Exception("");
+            throw new RuntimeException("");
         
         Integer capacity = facilityService.findById(reservationSessionAvailableRequest.getFacilityId()).getCapacity();
         Integer reservationCount = reservations.size();
 
         if(reservationCount > capacity)
-            throw new Exception("");
+            throw new RuntimeException("");
         
         Float occupancy = (float) reservationCount / capacity;
         Boolean isFull;

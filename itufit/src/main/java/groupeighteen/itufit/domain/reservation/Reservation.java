@@ -3,12 +3,9 @@ package groupeighteen.itufit.domain.reservation;
 import java.time.LocalDateTime;
 
 import groupeighteen.itufit.domain.facility.Facility;
+import groupeighteen.itufit.domain.user.Student;
 import groupeighteen.itufit.domain.user.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,8 +19,8 @@ public class Reservation {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     //private Long userId; // toDO: Check if the user id type is correctly defined
-    @OneToMany
-    private User user;
-    @OneToMany
+    @ManyToOne
+    private Student student;
+    @ManyToOne
     private Facility facility; // toDO: Check if the facility id type is correctly defined
 }

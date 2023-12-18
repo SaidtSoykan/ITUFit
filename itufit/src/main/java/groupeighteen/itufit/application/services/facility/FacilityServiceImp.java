@@ -22,10 +22,10 @@ public class FacilityServiceImp implements FacilityService{
         this.facilityRepository = facilityRepository;
     }
 
-    public IResponse add(FacilityAddRequest facilityAddRequest) throws Exception{
+    public IResponse add(FacilityAddRequest facilityAddRequest){
         var optionalFacility = facilityRepository.findByFacilityType(facilityAddRequest.getFacilityType());
         if(optionalFacility.isPresent())
-            throw new Exception("");
+            throw new RuntimeException("");
         
         Facility facilityToAdd = new Facility();
 
@@ -38,10 +38,10 @@ public class FacilityServiceImp implements FacilityService{
         return new Response<>(true, "");
     }
 
-    public IResponse remove(FacilityRemoveRequest facilityRemoveRequest) throws Exception{
+    public IResponse remove(FacilityRemoveRequest facilityRemoveRequest){
         var optionalFacility = facilityRepository.findById(facilityRemoveRequest.getId());
         if(optionalFacility.isEmpty())
-            throw new Exception("");
+            throw new RuntimeException("");
 
         Facility facilityToRemove = optionalFacility.get();
 
@@ -51,10 +51,10 @@ public class FacilityServiceImp implements FacilityService{
 
     
 
-    public Facility findById(Long id) throws Exception {
+    public Facility findById(Long id) {
         var optionalFacility = facilityRepository.findById(id);
         if(optionalFacility.isEmpty())
-            throw new Exception();
+            throw new RuntimeException();
         return optionalFacility.get();
     }
 }

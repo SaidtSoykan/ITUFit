@@ -1,4 +1,4 @@
-package groupeighteen.itufit.application.services.reservation;
+package groupeighteen.itufit.application.services.reservation.make;
 
 import java.time.LocalDateTime;
 

@@ -1,11 +1,11 @@
 package groupeighteen.itufit.domain.facility;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import groupeighteen.itufit.domain.reservation.Reservation;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,4 +18,6 @@ public class Facility{
     private Integer capacity;
     private String description;
     private String location;
+    @OneToMany
+    private List<Reservation> reservations;
 }

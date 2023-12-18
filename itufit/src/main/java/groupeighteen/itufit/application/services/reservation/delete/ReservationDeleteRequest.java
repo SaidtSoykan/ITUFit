@@ -1,4 +1,4 @@
-package groupeighteen.itufit.application.services.reservation;
+package groupeighteen.itufit.application.services.reservation.delete;
 
 import lombok.Getter;
 import lombok.Setter;
