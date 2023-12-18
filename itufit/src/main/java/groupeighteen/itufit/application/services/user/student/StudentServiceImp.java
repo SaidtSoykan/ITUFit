@@ -5,13 +5,13 @@ import groupeighteen.itufit.application.security.HashService;
 import groupeighteen.itufit.application.security.JwtService;
 import groupeighteen.itufit.application.services.user.student.login.StudentLoginRequest;
 import groupeighteen.itufit.application.services.user.student.login.StudentLoginResponse;
+import groupeighteen.itufit.application.services.user.student.physicalinfo.StudentSetPhysicalInfoRequest;
 import groupeighteen.itufit.application.services.user.student.register.StudentRegisterRequest;
 import groupeighteen.itufit.application.shared.response.DataResponse;
 import groupeighteen.itufit.application.shared.response.IDataResponse;
 import groupeighteen.itufit.application.shared.response.IResponse;
 import groupeighteen.itufit.application.shared.response.Response;
 import groupeighteen.itufit.domain.user.Student;
-import groupeighteen.itufit.domain.user.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,10 +31,10 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         this.jwtService = jwtService;
     }
 
-    public IDataResponse<StudentLoginResponse> login(StudentLoginRequest studentLoginRequest) throws Exception {
+    public IDataResponse<StudentLoginResponse> login(StudentLoginRequest studentLoginRequest)  {
         var optionalStudent = studentRepository.findByEmail(studentLoginRequest.getEmail());
         if (optionalStudent.isEmpty())
-            throw new Exception();
+            throw new RuntimeException();
         var student = optionalStudent.get();
         var hashedPassword = hashService.hashPassword(studentLoginRequest.getPassword(), student.getPasswordSalt());
         if (Arrays.equals(hashedPassword, student.getPasswordHash())) {
@@ -45,13 +45,25 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
 
             return response;
         }
-        throw new Exception("");
+        throw new RuntimeException("");
     }
 
-    public IResponse register(StudentRegisterRequest studentRegisterRequest) throws Exception {
+    @Override
+    public IResponse setPhysicalInfo(StudentSetPhysicalInfoRequest studentSetPhysicalInfoRequest) {
+        var student = this.findById(studentSetPhysicalInfoRequest.getId());
+        student.setWeight(studentSetPhysicalInfoRequest.getWeight());
+        student.setHeight(studentSetPhysicalInfoRequest.getHeight());
+        student.setGoalWeight(studentSetPhysicalInfoRequest.getGoalWeight());
+        student.setGender(studentSetPhysicalInfoRequest.getGender());
+
+        studentRepository.save(student);
+        return new Response<>(true, "");
+    }
+
+    public IResponse register(StudentRegisterRequest studentRegisterRequest) {
         var optionalStudent = studentRepository.findByEmail(studentRegisterRequest.getEmail());
         if (optionalStudent.isPresent())
-            throw new Exception("");
+            throw new RuntimeException("");
 
         Student studentToRegister = new Student();
         studentToRegister.setEmail(studentRegisterRequest.getEmail());
@@ -65,10 +77,17 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         return new Response<>(true, "");
     }
 
-    public User findByEmail(String email) throws Exception {
+    public Student findByEmail(String email) {
         var optionalStudent = studentRepository.findByEmail(email);
         if (optionalStudent.isEmpty())
-            throw new Exception();
+            throw new RuntimeException();
+        return optionalStudent.get();
+    }
+
+    public Student findById(Long id) {
+        var optionalStudent = studentRepository.findById(id);
+        if (optionalStudent.isEmpty())
+            throw new RuntimeException();
         return optionalStudent.get();
     }
 

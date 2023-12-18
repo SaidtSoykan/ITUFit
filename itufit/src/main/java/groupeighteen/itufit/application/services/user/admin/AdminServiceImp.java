@@ -38,10 +38,10 @@ public class AdminServiceImp implements UserDetailsService, AdminService {
         this.jwtService = jwtService;
     }
 
-    public IDataResponse<AdminLoginResponse> login(AdminLoginRequest adminLoginRequest) throws Exception {
+    public IDataResponse<AdminLoginResponse> login(AdminLoginRequest adminLoginRequest){
         var optionalAdmin = adminRepository.findByEmail(adminLoginRequest.getEmail());
         if (optionalAdmin.isEmpty())
-            throw new Exception();
+            throw new RuntimeException();
         var admin = optionalAdmin.get();
         var hashedPassword = hashService.hashPassword(adminLoginRequest.getPassword(), admin.getPasswordSalt());
         if (Arrays.equals(hashedPassword, admin.getPasswordHash())) {
@@ -52,18 +52,18 @@ public class AdminServiceImp implements UserDetailsService, AdminService {
 
             return response;
         }
-        throw new Exception("");
+        throw new RuntimeException("");
     }
 
-    public IResponse register(AdminRegisterRequest adminRegisterRequest) throws Exception {
+    public IResponse register(AdminRegisterRequest adminRegisterRequest) {
         var optionalAdmin = adminRepository.findByEmail(adminRegisterRequest.getEmail());
         if (optionalAdmin.isPresent())
-            throw new Exception("");
+            throw new RuntimeException("");
 
         var adminKey = getAdminKey();
         var hashedKey = hashService.hashPassword(adminRegisterRequest.getAdminKey(), adminKey.getKeySalt());
         if (!Arrays.equals(hashedKey, adminKey.getKeyHash())) {
-            throw new Exception();
+            throw new RuntimeException();
         }
 
         Admin adminToRegister = new Admin();
@@ -86,7 +86,7 @@ public class AdminServiceImp implements UserDetailsService, AdminService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) {
         try {
             return this.findByEmail(email);
         } catch (Exception e) {
@@ -94,14 +94,14 @@ public class AdminServiceImp implements UserDetailsService, AdminService {
         }
     }
 
-    private AdminKey getAdminKey() throws Exception {
+    private AdminKey getAdminKey() {
         var adminKey = adminKeyRepository.findAll();
         if (adminKey.size() != 1)
-            throw new Exception();
+            throw new RuntimeException();
         return adminKey.get(0);
     }
 
-    public IResponse changeAdminKey(String adminKey) throws NoSuchAlgorithmException {
+    public IResponse changeAdminKey(String adminKey) {
         adminKeyRepository.deleteAll();
         var key = new AdminKey();
         var keySalt = hashService.saltPassword(adminKey);
