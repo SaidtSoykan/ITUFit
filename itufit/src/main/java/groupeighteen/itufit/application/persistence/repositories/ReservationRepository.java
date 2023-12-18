@@ -1,4 +1,4 @@
-package groupeighteen.itufit.persistence.repositories;
+package groupeighteen.itufit.application.persistence.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

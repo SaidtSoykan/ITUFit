@@ -1,4 +1,4 @@
-package groupeighteen.itufit.persistence.repositories;
+package groupeighteen.itufit.application.persistence.repositories;
 
 import groupeighteen.itufit.domain.facility.Facility;
 import groupeighteen.itufit.domain.facility.FacilityType;

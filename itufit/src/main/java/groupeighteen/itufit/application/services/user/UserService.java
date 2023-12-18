@@ -54,6 +54,13 @@ public class UserService implements UserDetailsService {
         return optionalUser.get();
     }
 
+    public User findById(Long id) throws Exception{
+        var optionalUser = userRepository.findById(id);
+        if(optionalUser.isEmpty())
+            throw new Exception();
+        return optionalUser.get(); 
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         try {

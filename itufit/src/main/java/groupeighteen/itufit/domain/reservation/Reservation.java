@@ -2,6 +2,8 @@ package groupeighteen.itufit.domain.reservation;
 
 import java.time.LocalDateTime;
 
+import groupeighteen.itufit.domain.facility.Facility;
+import groupeighteen.itufit.domain.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

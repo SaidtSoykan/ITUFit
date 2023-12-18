@@ -1,4 +1,4 @@
-package groupeighteen.itufit.services.facility;
+package groupeighteen.itufit.application.services.facility;
 
 import groupeighteen.itufit.domain.facility.FacilityType;
 import lombok.Getter;

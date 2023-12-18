@@ -1,4 +1,4 @@
-package groupeighteen.itufit.services.facility;
+package groupeighteen.itufit.application.services.facility;
 
 import lombok.Getter;
 import lombok.Setter;
