@@ -1,11 +1,12 @@
-package groupeighteen.itufit.application.services.user;
+package groupeighteen.itufit.application.services.user.admin.register;
 
 import lombok.Getter;
 
 @Getter
-public class UserRegisterRequest {
+public class AdminRegisterRequest {
     private String firstName;
     private String lastName;
     private String email;
     private String password;
+    private String adminKey;
 }

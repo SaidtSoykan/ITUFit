@@ -10,15 +10,18 @@ import java.security.SecureRandom;
 @Service
 public class HashService {
 
-    public byte[] hashPassword(String password) throws NoSuchAlgorithmException {
-        SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[16];
-        random.nextBytes(salt);
-
+    public byte[] hashPassword(String password, byte[] salt) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-512");
         md.update(salt);
 
         byte[] hashedPassword = md.digest(password.getBytes(StandardCharsets.UTF_8));
         return hashedPassword;
+    }
+
+    public byte[] saltPassword(String password) throws NoSuchAlgorithmException {
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[16];
+        random.nextBytes(salt);
+        return salt;
     }
 }
