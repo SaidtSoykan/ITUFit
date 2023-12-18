@@ -65,8 +65,15 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         return new Response<>(true, "");
     }
 
-    public User findByEmail(String email) throws Exception {
+    public Student findByEmail(String email) throws Exception {
         var optionalStudent = studentRepository.findByEmail(email);
+        if (optionalStudent.isEmpty())
+            throw new Exception();
+        return optionalStudent.get();
+    }
+
+    public Student findById(Long id) throws Exception{
+        var optionalStudent = studentRepository.findById(id);
         if (optionalStudent.isEmpty())
             throw new Exception();
         return optionalStudent.get();

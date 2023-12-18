@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 // import java.time.LocalDateTime;
 
 import groupeighteen.itufit.application.persistence.repositories.FacilityRepository;
+import groupeighteen.itufit.application.shared.response.IResponse;
+import groupeighteen.itufit.application.shared.response.Response;
 import groupeighteen.itufit.domain.facility.Facility;
 // import groupeighteen.itufit.domain.user.User;
 
@@ -20,7 +22,7 @@ public class FacilityServiceImp implements FacilityService{
         this.facilityRepository = facilityRepository;
     }
 
-    public void add(FacilityAddRequest facilityAddRequest) throws Exception{
+    public IResponse add(FacilityAddRequest facilityAddRequest) throws Exception{
         var optionalFacility = facilityRepository.findByFacilityType(facilityAddRequest.getFacilityType());
         if(optionalFacility.isPresent())
             throw new Exception("");
@@ -33,9 +35,10 @@ public class FacilityServiceImp implements FacilityService{
         facilityToAdd.setLocation(facilityAddRequest.getLocation());
 
         facilityRepository.save(facilityToAdd);
+        return new Response<>(true, "");
     }
 
-    public void remove(FacilityRemoveRequest facilityRemoveRequest) throws Exception{
+    public IResponse remove(FacilityRemoveRequest facilityRemoveRequest) throws Exception{
         var optionalFacility = facilityRepository.findById(facilityRemoveRequest.getId());
         if(optionalFacility.isEmpty())
             throw new Exception("");
@@ -43,6 +46,7 @@ public class FacilityServiceImp implements FacilityService{
         Facility facilityToRemove = optionalFacility.get();
 
         facilityRepository.delete(facilityToRemove);
+        return new Response<>(true, "");
     }
 
     

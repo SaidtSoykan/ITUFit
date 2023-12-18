@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class ReservationMakeRequest {
     private Long facilityId;
-    private Long userId;    
+    private Long userId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 }
