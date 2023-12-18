@@ -1,6 +1,6 @@
 package groupeighteen.itufit.application.security;
 
-import groupeighteen.itufit.application.services.user.UserService;
+import groupeighteen.itufit.application.services.user.student.StudentServiceImp;
 import groupeighteen.itufit.domain.user.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,11 +18,11 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private JwtService jwtService;
-    private UserService userService;
+    private StudentServiceImp userServiceImp;
 
-    public JwtAuthFilter(JwtService jwtService, UserService userService) {
+    public JwtAuthFilter(JwtService jwtService, StudentServiceImp userServiceImp) {
         this.jwtService = jwtService;
-        this.userService = userService;
+        this.userServiceImp = userServiceImp;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             User user = null;
             try {
-                user = userService.findByEmail(email);
+                user = userServiceImp.findByEmail(email);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
