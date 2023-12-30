@@ -5,5 +5,6 @@ public enum FacilityType {
     POOL,
     TENNIS_COURT,
     TABLE_TENNIS,
-    BASKETBALL
+    BASKETBALL,
+    FOOTBALL
 }

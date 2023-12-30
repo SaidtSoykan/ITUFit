@@ -23,17 +23,17 @@ public class ReservationServiceImp implements ReservationService {
     private FacilityService facilityService;
     private StudentService studentService;
     
-    public ReservationServiceImp(ReservationRepository reservationRepository, FacilityService facilityService){
+    public ReservationServiceImp(ReservationRepository reservationRepository, FacilityService facilityService, StudentService studentService){
         this.reservationRepository = reservationRepository;
         this.facilityService = facilityService;
-        // this.studentService = studentService;
+        this.studentService = studentService;
     }
 
     public DataResponse<Boolean> make(ReservationMakeRequest reservationMakeRequest){
 
         List<Reservation> reservations = reservationRepository.findByStartTimeAndFacilityId(reservationMakeRequest.getStartTime(), reservationMakeRequest.getFacilityId());
-        if(reservations.isEmpty())
-            throw new RuntimeException("");
+        // if(reservations.isEmpty())
+        //     throw new RuntimeException("");
         
         Integer capacity = facilityService.findById(reservationMakeRequest.getFacilityId()).getCapacity();
         if(reservations.size() >= capacity)

@@ -1,5 +1,6 @@
 package groupeighteen.itufit.webapi;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,7 +40,7 @@ public class ReservationController {
         return reservationService.edit(reservationEditRequest);
     }
 
-    @PostMapping(value = "sessionAvailable", produces = "application/json")
+    @GetMapping(value = "sessionAvailable", produces = "application/json")
     public DataResponse<ReservationSessionAvailableResponse> sessionAvailable(@RequestBody ReservationSessionAvailableRequest reservationSessionAvailableRequest) throws Exception{
         return reservationService.sessionAvailable(reservationSessionAvailableRequest);
     }
