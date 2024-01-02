@@ -1,5 +1,6 @@
 package groupeighteen.itufit.domain.facility;
 
+import groupeighteen.itufit.domain.comment.Comment;
 import groupeighteen.itufit.domain.reservation.Reservation;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,4 +21,6 @@ public class Facility{
     private String location;
     @OneToMany(mappedBy = "facility")
     private List<Reservation> reservations;
+    @OneToMany(mappedBy = "facility")
+    private List<Comment> comments;
 }

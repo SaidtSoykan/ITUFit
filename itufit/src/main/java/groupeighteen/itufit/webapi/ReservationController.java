@@ -40,6 +40,7 @@ public class ReservationController {
         return reservationService.edit(reservationEditRequest);
     }
 
+    // TODO: Check functionallity of sessionAvaliable
     @GetMapping(value = "sessionAvailable", produces = "application/json")
     public DataResponse<ReservationSessionAvailableResponse> sessionAvailable(@RequestBody ReservationSessionAvailableRequest reservationSessionAvailableRequest) throws Exception{
         return reservationService.sessionAvailable(reservationSessionAvailableRequest);
