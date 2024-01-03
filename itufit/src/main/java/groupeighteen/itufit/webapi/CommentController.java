@@ -9,6 +9,8 @@ import groupeighteen.itufit.application.shared.response.IResponse;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -24,9 +26,15 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    @CrossOrigin
     @PostMapping(value = "addComment", produces = "application/json")
     public IResponse add(@RequestBody CommentAddRequest commentAddRequest) {
         return commentService.add(commentAddRequest);
+    }
+    @CrossOrigin
+    @GetMapping(value = "listComment", produces = "application/json")
+    public void list() {
+        return;
     }
     
 }
