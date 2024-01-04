@@ -23,6 +23,4 @@ public class Student extends User {
     private List<Reservation> reservations;
     @OneToMany(mappedBy = "student")
     private List<Comment> comments;
-    @OneToMany(mappedBy = "user")
-    private List<Notification> notifications;
 }

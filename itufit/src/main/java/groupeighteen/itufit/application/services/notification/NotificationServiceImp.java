@@ -1,22 +1,50 @@
 package groupeighteen.itufit.application.services.notification;
 
-import groupeighteen.itufit.application.persistence.repositories.ReservationRepository;
-import groupeighteen.itufit.application.services.facility.FacilityService;
-import groupeighteen.itufit.application.services.reservation.ReservationService;
-import groupeighteen.itufit.application.services.reservation.delete.ReservationDeleteRequest;
-import groupeighteen.itufit.application.services.reservation.edit.ReservationEditRequest;
-import groupeighteen.itufit.application.services.reservation.make.ReservationMakeRequest;
-import groupeighteen.itufit.application.services.reservation.sessionAvailable.ReservationSessionAvailableRequest;
-import groupeighteen.itufit.application.services.reservation.sessionAvailable.ReservationSessionAvailableResponse;
-import groupeighteen.itufit.application.services.user.student.StudentService;
+import groupeighteen.itufit.application.persistence.repositories.NotificationRepository;
+import groupeighteen.itufit.application.services.notification.create.CreateNotificationRequest;
+import groupeighteen.itufit.application.services.notification.delete.DeleteNotificationRequest;
+import groupeighteen.itufit.application.services.notification.get.GetNotificationsRequest;
 import groupeighteen.itufit.application.shared.response.DataResponse;
-import groupeighteen.itufit.application.shared.response.IResponse;
-import groupeighteen.itufit.application.shared.response.Response;
-import groupeighteen.itufit.domain.reservation.Reservation;
+import groupeighteen.itufit.application.shared.response.IDataResponse;
+import groupeighteen.itufit.domain.notification.Notification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class NotificationServiceImp implements NotificationService {
+    public static final int[] notificationIntervals = {24, 4, 1};
+
+    private final NotificationRepository notificationRepository;
+
+    public NotificationServiceImp(NotificationRepository notificationRepository) {
+        this.notificationRepository = notificationRepository;
+    }
+
+    public void createNotification(CreateNotificationRequest createNotificationRequest) {
+        for (int notificationInterval : notificationIntervals) {
+            var notification = new Notification();
+            notification.setMessage("Reservasyona kaldı.");
+            notification.setReservation(createNotificationRequest.getReservation());
+            notification.setNotificationTime(createNotificationRequest.getReservation().getStartTime().plusHours(notificationInterval));
+            this.notificationRepository.save(notification);
+        }
+    }
+
+    public void deleteNotification(DeleteNotificationRequest deleteNotificationRequest) {
+        this.notificationRepository.deleteNotificationsByReservationId(deleteNotificationRequest.getReservation().getId());
+    }
+
+    @Override
+    public IDataResponse<List<Notification>> getNotifications(GetNotificationsRequest getNotificationsRequest) {
+        var notifications = new ArrayList<Notification>();
+        for (int notificationInterval : notificationIntervals) {
+            var foundNotifications = this.notificationRepository.getNotificationsByNotificationTime(getNotificationsRequest.getRequestTime().plusHours(notificationInterval));
+            if (!foundNotifications.isPresent())
+                continue;
+            notifications.addAll(foundNotifications.get());
+        }
+        return new DataResponse<>(true, "", notifications);
+    }
 }
