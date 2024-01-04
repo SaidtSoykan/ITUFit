@@ -89,42 +89,20 @@ public class ReservationServiceImp implements ReservationService {
 
     public IResponse delete(ReservationDeleteRequest reservationDeleteRequest) {
 
-        var optionalReservation = reservationRepository.findById(reservationDeleteRequest.getId());
+        var optionalReservation = reservationRepository.findById(reservationDeleteRequest.getReservationId());
         if (optionalReservation.isEmpty())
             throw new RuntimeException("");
-
-        Reservation reservationToDelete = optionalReservation.get();
-        reservationRepository.delete(reservationToDelete);
-        this.notificationService.deleteNotification(new DeleteNotificationRequest(reservationToDelete));
-
-        return new Response<>(true, "");
-    }
-
-    public IResponse edit(ReservationEditRequest reservationEditRequest) {
-        var optionalReservation = reservationRepository.findById(reservationEditRequest.getOldId());
-        if (optionalReservation.isEmpty())
-            throw new RuntimeException("");
-
-        ReservationDeleteRequest reservationDeleteRequest = new ReservationDeleteRequest();
-        reservationDeleteRequest.setId(reservationEditRequest.getOldId());
-
-        ReservationMakeRequest reservationMakeRequest = new ReservationMakeRequest();
-        reservationMakeRequest.setStartTime(reservationEditRequest.getNewStartTime());
-        reservationMakeRequest.setEndTime(reservationEditRequest.getNewEndTime());
-        reservationMakeRequest.setFacilityId(reservationEditRequest.getFacilityId());
-        reservationMakeRequest.setUserId(reservationEditRequest.getUserId());
-
-
-
-        if (make(reservationMakeRequest).getData())
-            delete(reservationDeleteRequest);
-        return new Response<>(true, "");
-    }
-        studentService.increaseScore(reservationDeleteRequest.getId());
         
+        Reservation reservationToDelete = optionalReservation.get();
+
+        this.notificationService.deleteNotification(new DeleteNotificationRequest(reservationToDelete));
+        reservationRepository.delete(reservationToDelete);
+        
+        
+        studentService.decreaseScore(reservationDeleteRequest.getUserId());
         return new Response<>(true, "");
     }
-    
+
     // public IResponse edit(ReservationEditRequest reservationEditRequest){
     //     var optionalReservation = reservationRepository.findById(reservationEditRequest.getOldId());
     //     if(optionalReservation.isEmpty())

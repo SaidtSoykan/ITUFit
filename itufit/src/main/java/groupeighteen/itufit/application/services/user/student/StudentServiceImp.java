@@ -147,6 +147,7 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
     public void decreaseScore(Long id){
         Student student = this.findById(id);
         student.setExerciseScore(student.getExerciseScore() - 2);
+        studentRepository.save(student);
     }
 
     public Student findByEmail(String email) {

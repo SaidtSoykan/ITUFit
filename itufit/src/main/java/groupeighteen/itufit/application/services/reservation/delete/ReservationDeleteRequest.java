@@ -6,5 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReservationDeleteRequest {
-    private Long id;
+    private Long reservationId;
+    private Long userId;
 }

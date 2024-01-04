@@ -7,6 +7,8 @@ import groupeighteen.itufit.application.services.notification.get.GetNotificatio
 import groupeighteen.itufit.application.shared.response.DataResponse;
 import groupeighteen.itufit.application.shared.response.IDataResponse;
 import groupeighteen.itufit.domain.notification.Notification;
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class NotificationServiceImp implements NotificationService {
         }
     }
 
+    @Transactional
     public void deleteNotification(DeleteNotificationRequest deleteNotificationRequest) {
         this.notificationRepository.deleteNotificationsByReservationId(deleteNotificationRequest.getReservation().getId());
     }
