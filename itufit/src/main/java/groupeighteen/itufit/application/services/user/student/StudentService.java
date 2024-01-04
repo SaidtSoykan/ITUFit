@@ -1,7 +1,7 @@
 package groupeighteen.itufit.application.services.user.student;
 
+import groupeighteen.itufit.application.services.user.student.changepassword.StudentPasswordChangeRequest;
 import java.util.List;
-
 import groupeighteen.itufit.application.services.user.student.login.StudentLoginRequest;
 import groupeighteen.itufit.application.services.user.student.login.StudentLoginResponse;
 import groupeighteen.itufit.application.services.user.student.physicalinfo.StudentGetPhysicalInfoRequest;
@@ -20,6 +20,7 @@ public interface StudentService {
     IResponse setPhysicalInfo(StudentSetPhysicalInfoRequest studentSetPhysicalInfoRequest);
     IDataResponse<StudentGetPhysicalInfoRespond> getPhysicalInfo(StudentGetPhysicalInfoRequest studentGetPhysicalInfoRequest);
     Student findById(Long id);
+    IResponse changePassword(StudentPasswordChangeRequest studentPasswordChangeRequest);
     void decreaseScore(Long id);
     void increaseScore(Long id);
     public DataResponse<List<StudentRankingResponse>> listRankings();

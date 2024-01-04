@@ -3,6 +3,7 @@ package groupeighteen.itufit.application.services.user.student;
 import groupeighteen.itufit.application.persistence.repositories.StudentRepository;
 import groupeighteen.itufit.application.security.HashService;
 import groupeighteen.itufit.application.security.JwtService;
+import groupeighteen.itufit.application.services.user.student.changepassword.StudentPasswordChangeRequest;
 import groupeighteen.itufit.application.services.user.student.login.StudentLoginRequest;
 import groupeighteen.itufit.application.services.user.student.login.StudentLoginResponse;
 import groupeighteen.itufit.application.services.user.student.physicalinfo.StudentGetPhysicalInfoRequest;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.List;
 
 @Service
@@ -38,7 +40,7 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         this.jwtService = jwtService;
     }
 
-    public IDataResponse<StudentLoginResponse> login(StudentLoginRequest studentLoginRequest)  {
+    public IDataResponse<StudentLoginResponse> login(StudentLoginRequest studentLoginRequest) {
         var optionalStudent = studentRepository.findByEmail(studentLoginRequest.getEmail());
         if (optionalStudent.isEmpty()){
             var response = new DataResponse<StudentLoginResponse>(
@@ -162,6 +164,21 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
     }
 
     @Override
+    public IResponse changePassword(StudentPasswordChangeRequest studentPasswordChangeRequest) {
+        if (!Objects.equals(studentPasswordChangeRequest.getNewPassword(), studentPasswordChangeRequest.getNewPasswordConfirmation()))
+            throw new RuntimeException("sifreler ayni degil");
+        var student = this.findById(studentPasswordChangeRequest.getUserId());
+        var oldPasswordSalt = hashService.saltPassword(studentPasswordChangeRequest.getOldPassword());
+        var oldPasswordHash = hashService.hashPassword(studentPasswordChangeRequest.getOldPassword(), oldPasswordSalt);
+        if (!Arrays.equals(oldPasswordHash, student.getPasswordHash()))
+            throw new RuntimeException("old password wrong");
+        student.setPasswordSalt(hashService.saltPassword(studentPasswordChangeRequest.getNewPassword()));
+        student.setPasswordHash(hashService.hashPassword(studentPasswordChangeRequest.getNewPassword(), student.getPasswordSalt()));
+        studentRepository.save(student);
+        return new Response<>(true, "Password changed");
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         try {
             return this.findByEmail(email);
@@ -170,7 +187,7 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         }
     }
 
-    private String extractUsername(String email){
+    private String extractUsername(String email) {
         return email.substring(0, email.indexOf("@"));
     }
 }
