@@ -10,6 +10,6 @@ public interface CommentService {
 
     IResponse add(CommentAddRequest commentAddRequest);
 
-    DataResponse <List<Comment>> list(CommentListRequest commentListRequest);
+    DataResponse <List<CommentListResponse>> list(CommentListRequest commentListRequest);
     
 }

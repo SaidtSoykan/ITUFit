@@ -17,6 +17,7 @@ public class Comment {
     private Long id;
     private LocalDateTime date;
     private String comment;
+    private Integer rating;
 
     @ManyToOne
     private Student student;
