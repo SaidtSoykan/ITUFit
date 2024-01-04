@@ -1,6 +1,7 @@
 package groupeighteen.itufit.domain.user;
 
 import groupeighteen.itufit.domain.comment.Comment;
+import groupeighteen.itufit.domain.notification.Notification;
 import groupeighteen.itufit.domain.reservation.Reservation;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
