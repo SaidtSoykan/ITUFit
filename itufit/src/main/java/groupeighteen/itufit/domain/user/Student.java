@@ -14,11 +14,15 @@ import java.util.List;
 @Getter
 @Setter
 public class Student extends User {
+
     private double weight;
     private double goalWeight;
     private double height;
-    private Gender gender;
+    private double basalMetabolism;
+
     private boolean isRestricted;
+    private Integer exerciseScore = 0;
+    
     @OneToMany(mappedBy = "student")
     private List<Reservation> reservations;
     @OneToMany(mappedBy = "student")

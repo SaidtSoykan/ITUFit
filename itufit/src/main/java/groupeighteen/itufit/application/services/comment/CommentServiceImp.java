@@ -1,6 +1,7 @@
 package groupeighteen.itufit.application.services.comment;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -44,15 +45,21 @@ public class CommentServiceImp implements CommentService {
         return new Response<>(true, "");
     }
 
-    public DataResponse <List<Comment>> list(CommentListRequest commentListRequest){
+    public DataResponse <List<CommentListResponse>> list(CommentListRequest commentListRequest){
         
         Facility facilityToList = facilityService.findById(commentListRequest.getFacilityId());
 
         List <Comment> comments = commentRepository.findByFacility(facilityToList);
-        var response = new DataResponse<List<Comment>>(
+        List <CommentListResponse> commentIds = new ArrayList<>();
+
+        for(Comment comment:comments){
+            CommentListResponse aComment = new CommentListResponse(comment.getComment(), comment.getStudent().getFirstName());
+            commentIds.add(aComment);
+        }
+        var response = new DataResponse<List<CommentListResponse>>(
                     true,
                     "",
-                    comments);
+                    commentIds);
 
         return response;
     }

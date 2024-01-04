@@ -2,9 +2,9 @@ package groupeighteen.itufit.application.services.user.admin;
 
 import groupeighteen.itufit.application.persistence.repositories.AdminKeyRepository;
 import groupeighteen.itufit.application.persistence.repositories.AdminRepository;
-import groupeighteen.itufit.application.persistence.repositories.StudentRepository;
 import groupeighteen.itufit.application.security.HashService;
 import groupeighteen.itufit.application.security.JwtService;
+import groupeighteen.itufit.application.services.user.admin.changepassword.AdminPasswordChangeRequest;
 import groupeighteen.itufit.application.services.user.admin.login.AdminLoginRequest;
 import groupeighteen.itufit.application.services.user.admin.login.AdminLoginResponse;
 import groupeighteen.itufit.application.services.user.admin.register.AdminRegisterRequest;
@@ -14,15 +14,13 @@ import groupeighteen.itufit.application.shared.response.IResponse;
 import groupeighteen.itufit.application.shared.response.Response;
 import groupeighteen.itufit.domain.user.Admin;
 import groupeighteen.itufit.domain.user.AdminKey;
-import groupeighteen.itufit.domain.user.Student;
 import groupeighteen.itufit.domain.user.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Objects;
 
 @Service
 public class AdminServiceImp implements UserDetailsService, AdminService {
@@ -55,6 +53,28 @@ public class AdminServiceImp implements UserDetailsService, AdminService {
         throw new RuntimeException("");
     }
 
+    public Admin findById(Long id) {
+        var optionalAdmin = adminRepository.findById(id);
+        if (optionalAdmin.isEmpty())
+            throw new RuntimeException();
+        return optionalAdmin.get();
+    }
+
+    @Override
+    public IResponse changePassword(AdminPasswordChangeRequest adminPasswordChangeRequest) {
+        if (!Objects.equals(adminPasswordChangeRequest.getNewPassword(), adminPasswordChangeRequest.getNewPasswordConfirmation()))
+            throw new RuntimeException("sifreler ayni degil");
+        var admin = this.findById(adminPasswordChangeRequest.getUserId());
+        var oldPasswordSalt = hashService.saltPassword(adminPasswordChangeRequest.getOldPassword());
+        var oldPasswordHash = hashService.hashPassword(adminPasswordChangeRequest.getOldPassword(), oldPasswordSalt);
+        if (!Arrays.equals(oldPasswordHash, admin.getPasswordHash()))
+            throw new RuntimeException("old password wrong");
+        admin.setPasswordSalt(hashService.saltPassword(adminPasswordChangeRequest.getNewPassword()));
+        admin.setPasswordHash(hashService.hashPassword(adminPasswordChangeRequest.getNewPassword(), admin.getPasswordSalt()));
+        adminRepository.save(admin);
+        return new Response<>(true, "Password changed");
+    }
+
     public IResponse register(AdminRegisterRequest adminRegisterRequest) {
         var optionalAdmin = adminRepository.findByEmail(adminRegisterRequest.getEmail());
         if (optionalAdmin.isPresent())
@@ -79,10 +99,10 @@ public class AdminServiceImp implements UserDetailsService, AdminService {
     }
 
     public User findByEmail(String email) throws Exception {
-        var optionalStudent = adminRepository.findByEmail(email);
-        if (optionalStudent.isEmpty())
+        var optionalAdmin = adminRepository.findByEmail(email);
+        if (optionalAdmin.isEmpty())
             throw new Exception();
-        return optionalStudent.get();
+        return optionalAdmin.get();
     }
 
     @Override
