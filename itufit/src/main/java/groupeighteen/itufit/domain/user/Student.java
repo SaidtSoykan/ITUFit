@@ -1,6 +1,7 @@
 package groupeighteen.itufit.domain.user;
 
 import groupeighteen.itufit.domain.comment.Comment;
+import groupeighteen.itufit.domain.notification.Notification;
 import groupeighteen.itufit.domain.reservation.Reservation;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -22,4 +23,6 @@ public class Student extends User {
     private List<Reservation> reservations;
     @OneToMany(mappedBy = "student")
     private List<Comment> comments;
+    @OneToMany(mappedBy = "user")
+    private List<Notification> notifications;
 }

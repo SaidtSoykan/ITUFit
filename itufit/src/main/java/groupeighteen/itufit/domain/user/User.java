@@ -1,5 +1,7 @@
 package groupeighteen.itufit.domain.user;
 
+import groupeighteen.itufit.domain.comment.Comment;
+import groupeighteen.itufit.domain.notification.Notification;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
