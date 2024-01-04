@@ -1,5 +1,6 @@
 package groupeighteen.itufit.webapi;
 
+import groupeighteen.itufit.application.services.user.student.changepassword.StudentPasswordChangeRequest;
 import groupeighteen.itufit.application.services.user.student.login.StudentLoginRequest;
 import groupeighteen.itufit.application.services.user.student.login.StudentLoginResponse;
 import groupeighteen.itufit.application.services.user.student.physicalinfo.StudentGetPhysicalInfoRequest;
@@ -36,8 +37,18 @@ public class StudentController {
     }
 
     @PostMapping(value = "register", produces = "application/json")
-    public IResponse register(@RequestBody StudentRegisterRequest studentRegisterRequest){
+    public IResponse register(@RequestBody StudentRegisterRequest studentRegisterRequest) {
         return studentService.register(studentRegisterRequest);
+    }
+
+    @PostMapping(value = "physicalinfo", produces = "application/json")
+    public IResponse setPhysicalInfo(@RequestBody StudentSetPhysicalInfoRequest studentSetPhysicalInfoRequest) {
+        return studentService.setPhysicalInfo(studentSetPhysicalInfoRequest);
+    }
+
+    @PostMapping(value = "changepassword", produces = "application/json")
+    public IResponse changePassword(@RequestBody StudentPasswordChangeRequest studentPasswordChangeRequest) {
+        return studentService.changePassword(studentPasswordChangeRequest);
     }
 
     @PostMapping(value = "physicalInfo", produces = "application/json")
