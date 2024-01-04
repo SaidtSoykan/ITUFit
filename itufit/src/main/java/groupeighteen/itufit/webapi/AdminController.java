@@ -41,4 +41,4 @@ public class AdminController {
         return adminService.changePassword(adminPasswordChangeRequest);
     }
 }
-}
+

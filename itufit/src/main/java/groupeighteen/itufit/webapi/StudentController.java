@@ -50,12 +50,7 @@ public class StudentController {
     public IResponse changePassword(@RequestBody StudentPasswordChangeRequest studentPasswordChangeRequest) {
         return studentService.changePassword(studentPasswordChangeRequest);
     }
-
-    @PostMapping(value = "physicalInfo", produces = "application/json")
-    public IResponse setPhysicalInfo(@RequestBody StudentSetPhysicalInfoRequest studentSetPhysicalInfoRequest){
-        return studentService.setPhysicalInfo(studentSetPhysicalInfoRequest);
-    }
-
+    
     @PostMapping(value = "getPhysicalInfo", produces = "application/json")
     public IDataResponse<StudentGetPhysicalInfoRespond> getPhysicalInfo(@RequestBody StudentGetPhysicalInfoRequest studentGetPhysicalInfoRequest) {
         return studentService.getPhysicalInfo(studentGetPhysicalInfoRequest);
