@@ -6,15 +6,22 @@ import groupeighteen.itufit.application.services.reservation.sessionAvailable.Re
 import groupeighteen.itufit.application.services.reservation.sessionAvailable.ReservationSessionAvailableResponse;
 import groupeighteen.itufit.application.services.reservation.make.ReservationMakeRequest;
 import groupeighteen.itufit.application.services.reservation.edit.ReservationEditRequest;
+import groupeighteen.itufit.application.services.reservation.list.ReservationListRequest;
+import groupeighteen.itufit.application.services.reservation.list.ReservationListResponse;
 import groupeighteen.itufit.application.services.reservation.delete.ReservationDeleteRequest;
 import groupeighteen.itufit.application.services.user.student.StudentService;
 // import groupeighteen.itufit.application.services.user.student.login.StudentLoginResponse;
 import groupeighteen.itufit.application.shared.response.DataResponse;
+import groupeighteen.itufit.application.shared.response.IDataResponse;
 import groupeighteen.itufit.application.shared.response.IResponse;
 import groupeighteen.itufit.application.shared.response.Response;
 import groupeighteen.itufit.domain.reservation.Reservation;
+import groupeighteen.itufit.domain.user.Student;
+
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,7 +38,21 @@ public class ReservationServiceImp implements ReservationService {
 
     public DataResponse<Boolean> make(ReservationMakeRequest reservationMakeRequest){
 
-        List<Reservation> reservations = reservationRepository.findByStartTimeAndFacilityId(reservationMakeRequest.getStartTime(), reservationMakeRequest.getFacilityId());
+        String timeString = reservationMakeRequest.getStartTime();
+        String dateString = reservationMakeRequest.getDate();
+
+        String[] dateParts = dateString.split("-");
+        String[] timeParts = timeString.split(":");
+        
+        Integer year = Integer.valueOf(dateParts[0]);
+        Integer month = Integer.valueOf(dateParts[1]);
+        Integer day = Integer.valueOf(dateParts[2]);
+        Integer hour = Integer.valueOf(timeParts[0]);
+        
+        LocalDateTime localDateTime = LocalDateTime.of(
+            year, month, day, hour, 0, 0, 0);
+        
+        List<Reservation> reservations = reservationRepository.findByStartTimeAndFacilityId(localDateTime, reservationMakeRequest.getFacilityId());
         // if(reservations.isEmpty())
         //     throw new RuntimeException("");
         
@@ -43,13 +64,17 @@ public class ReservationServiceImp implements ReservationService {
         if(userIsRestricted)
             throw new RuntimeException("");
         
+        
+
+        
         Reservation reservationToMake = new Reservation();
-        reservationToMake.setStartTime(reservationMakeRequest.getStartTime());
-        reservationToMake.setEndTime(reservationMakeRequest.getEndTime());
+        reservationToMake.setStartTime(localDateTime);
         reservationToMake.setFacility(facilityService.findById(reservationMakeRequest.getFacilityId()));
         reservationToMake.setStudent(studentService.findById(reservationMakeRequest.getUserId()));
 
         reservationRepository.save(reservationToMake);
+        studentService.increaseScore(reservationMakeRequest.getUserId());
+        
         var response = new DataResponse<Boolean>(
                     true,
                     "",
@@ -66,29 +91,30 @@ public class ReservationServiceImp implements ReservationService {
         
         Reservation reservationToDelete = optionalReservation.get(); 
         reservationRepository.delete(reservationToDelete);
+        studentService.increaseScore(reservationDeleteRequest.getId());
         
         return new Response<>(true, "");
     }
     
-    public IResponse edit(ReservationEditRequest reservationEditRequest){
-        var optionalReservation = reservationRepository.findById(reservationEditRequest.getOldId());
-        if(optionalReservation.isEmpty())
-            throw new RuntimeException("");
+    // public IResponse edit(ReservationEditRequest reservationEditRequest){
+    //     var optionalReservation = reservationRepository.findById(reservationEditRequest.getOldId());
+    //     if(optionalReservation.isEmpty())
+    //         throw new RuntimeException("");
 
-        ReservationDeleteRequest reservationDeleteRequest = new ReservationDeleteRequest();
-        reservationDeleteRequest.setId(reservationEditRequest.getOldId());
+    //     ReservationDeleteRequest reservationDeleteRequest = new ReservationDeleteRequest();
+    //     reservationDeleteRequest.setId(reservationEditRequest.getOldId());
         
-        ReservationMakeRequest reservationMakeRequest = new ReservationMakeRequest();
-        reservationMakeRequest.setStartTime(reservationEditRequest.getNewStartTime());
-        reservationMakeRequest.setEndTime(reservationEditRequest.getNewEndTime());
-        reservationMakeRequest.setFacilityId(reservationEditRequest.getFacilityId());
-        reservationMakeRequest.setUserId(reservationEditRequest.getUserId());
+    //     ReservationMakeRequest reservationMakeRequest = new ReservationMakeRequest();
+    //     reservationMakeRequest.setStartTime(reservationEditRequest.getNewStartTime());
+    //     reservationMakeRequest.setEndTime(reservationEditRequest.getNewEndTime());
+    //     reservationMakeRequest.setFacilityId(reservationEditRequest.getFacilityId());
+    //     reservationMakeRequest.setUserId(reservationEditRequest.getUserId());
 
         
-        if(make(reservationMakeRequest).getData())
-            delete(reservationDeleteRequest);
-        return new Response<>(true, "");
-    }
+    //     if(make(reservationMakeRequest).getData())
+    //         delete(reservationDeleteRequest);
+    //     return new Response<>(true, "");
+    // }
 
     public DataResponse<ReservationSessionAvailableResponse> sessionAvailable(ReservationSessionAvailableRequest reservationSessionAvailableRequest){
         List<Reservation> reservations = reservationRepository.findByStartTimeAndFacilityId(reservationSessionAvailableRequest.getStartTime(), reservationSessionAvailableRequest.getFacilityId());
@@ -114,6 +140,23 @@ public class ReservationServiceImp implements ReservationService {
                     "",
                     new ReservationSessionAvailableResponse(occupancy, isFull));
 
+        return response;
+    }
+
+    public IDataResponse<List<ReservationListResponse>> list(ReservationListRequest reservationListRequest){
+
+        Student student = studentService.findById(reservationListRequest.getUserId());
+        List<Reservation> reservations = reservationRepository.findByStudent(student);
+        List<ReservationListResponse> reservationIds = new ArrayList<>();
+
+        for(Reservation reservation: reservations){
+            reservation.getStartTime();
+
+            ReservationListResponse aReservation = new ReservationListResponse(reservation.getId(), reservation.getFacility().getFacilityType(), reservation.getStartTime());
+            reservationIds.add(aReservation);
+        }
+
+        var response = new DataResponse<List<ReservationListResponse>>(true, "", reservationIds);
         return response;
     }
 

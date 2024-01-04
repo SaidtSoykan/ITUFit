@@ -1,10 +1,13 @@
 package groupeighteen.itufit.application.services.user.student.physicalinfo;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-public class StudentSetPhysicalInfoRequest {
-    private Long id;
+@Setter
+@AllArgsConstructor
+public class StudentGetPhysicalInfoRespond {
     private double weight;
     private double goalWeight;
     private double height;

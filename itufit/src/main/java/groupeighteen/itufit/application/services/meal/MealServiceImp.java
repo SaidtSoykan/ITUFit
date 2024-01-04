@@ -15,9 +15,9 @@ import java.net.HttpURLConnection;
 // import java.net.MalformedURLException;
 import java.net.URL;
 // import java.net.URLConnection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+// import org.jsoup.Jsoup;
+// import org.jsoup.nodes.Document;
+// import org.jsoup.nodes.Element;
 // import org.jsoup.select.Elements;
 
 @Service
@@ -40,13 +40,13 @@ public class MealServiceImp implements MealService {
 
             // Step 2: Parse HTML content
             if (htmlContent != null) {
-                Document document = Jsoup.parse(htmlContent);
-                document.outputSettings().charset("UTF-8");
+                // Document document = Jsoup.parse(htmlContent);
+                // document.outputSettings().charset("UTF-8");
 
-                Element calorieElem = document.getElementById("lbKalori");
-                String calorieText = calorieElem.text();
-                calorieText = calorieText.replace(",",".");
-                calorie = Double.parseDouble(calorieText);
+                // Element calorieElem = document.getElementById("lbKalori");
+                // String calorieText = calorieElem.text();
+                // calorieText = calorieText.replace(",",".");
+                // calorie = Double.parseDouble(calorieText);
             }
         } catch (IOException e) {
             e.printStackTrace();

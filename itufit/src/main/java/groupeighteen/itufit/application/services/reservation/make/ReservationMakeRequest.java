@@ -10,6 +10,6 @@ import lombok.Setter;
 public class ReservationMakeRequest {
     private Long facilityId;
     private Long userId;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private String startTime;
+    private String date;
 }
