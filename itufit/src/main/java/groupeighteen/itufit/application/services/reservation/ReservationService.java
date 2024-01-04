@@ -1,5 +1,6 @@
 package groupeighteen.itufit.application.services.reservation;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import groupeighteen.itufit.application.services.reservation.delete.ReservationDeleteRequest;
@@ -25,4 +26,6 @@ public interface ReservationService {
     DataResponse<ReservationSessionAvailableResponse> sessionAvailable(ReservationSessionAvailableRequest reservationSessionAvailableRequest);
 
     public IDataResponse<List<ReservationListResponse>> list(ReservationListRequest reservationListRequest);
+
+    boolean isSessionAvailable(Long facilityId, LocalDateTime startTime);
 }

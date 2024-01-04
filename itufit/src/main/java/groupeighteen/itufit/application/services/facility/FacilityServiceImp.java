@@ -20,19 +20,19 @@ import groupeighteen.itufit.domain.facility.Facility;
 import groupeighteen.itufit.domain.facility.FacilityType;
 
 @Service
-public class FacilityServiceImp implements FacilityService{
+public class FacilityServiceImp implements FacilityService {
     private FacilityRepository facilityRepository;
-    
 
-    public FacilityServiceImp(FacilityRepository facilityRepository){
+
+    public FacilityServiceImp(FacilityRepository facilityRepository) {
         this.facilityRepository = facilityRepository;
     }
 
-    public IResponse add(FacilityAddRequest facilityAddRequest){
+    public IResponse add(FacilityAddRequest facilityAddRequest) {
         // var optionalFacility = facilityRepository.findByFacilityType(facilityAddRequest.getFacilityType());
         // if(optionalFacility.isPresent())
         //     throw new RuntimeException("");
-        
+
         Facility facilityToAdd = new Facility();
 
         facilityToAdd.setCapacity(facilityAddRequest.getCapacity());
@@ -44,9 +44,9 @@ public class FacilityServiceImp implements FacilityService{
         return new Response<>(true, "");
     }
 
-    public IResponse remove(FacilityRemoveRequest facilityRemoveRequest){
+    public IResponse remove(FacilityRemoveRequest facilityRemoveRequest) {
         var optionalFacility = facilityRepository.findById(facilityRemoveRequest.getId());
-        if(optionalFacility.isEmpty())
+        if (optionalFacility.isEmpty())
             throw new RuntimeException("");
 
         Facility facilityToRemove = optionalFacility.get();
@@ -55,11 +55,11 @@ public class FacilityServiceImp implements FacilityService{
         return new Response<>(true, "");
     }
 
-    public IDataResponse<List<FacilityListResponse>> list(){
+    public IDataResponse<List<FacilityListResponse>> list() {
         List<Facility> facilities = facilityRepository.findAll();
         List<FacilityListResponse> facilityIds = new ArrayList<>();
-        
-        for(Facility facility:facilities){
+
+        for (Facility facility : facilities) {
             FacilityListResponse aFacility = new FacilityListResponse(facility.getId(), facility.getFacilityType());
 
             // aFacility.setFacilityId(facility.getId());
@@ -69,7 +69,7 @@ public class FacilityServiceImp implements FacilityService{
 
         String massage;
 
-        if(facilityIds.isEmpty())
+        if (facilityIds.isEmpty())
             massage = "There are no facility exists.";
         else
             massage = "";
@@ -78,9 +78,9 @@ public class FacilityServiceImp implements FacilityService{
         return response;
     }
 
-    public IDataResponse<FacilityListResponse> search(FacilitySearchRequest facilitySearchRequest){
+    public IDataResponse<FacilityListResponse> search(FacilitySearchRequest facilitySearchRequest) {
         var optionalFacility = facilityRepository.findByFacilityType(facilitySearchRequest.getFacilityType());
-        if(optionalFacility.isEmpty())
+        if (optionalFacility.isEmpty())
             throw new RuntimeException();
         Facility facility = optionalFacility.get();
         FacilityListResponse response = new FacilityListResponse(facility.getId(), facility.getFacilityType());
@@ -88,11 +88,17 @@ public class FacilityServiceImp implements FacilityService{
         return dataResponse;
     }
 
-    
+    @Override
+    public Facility findByFacilityType(FacilityType facilityType) {
+        var optionalFacility = facilityRepository.findByFacilityType(facilityType);
+        if (optionalFacility.isEmpty())
+            throw new RuntimeException();
+        return optionalFacility.get();
+    }
 
     public Facility findById(Long id) {
         var optionalFacility = facilityRepository.findById(id);
-        if(optionalFacility.isEmpty())
+        if (optionalFacility.isEmpty())
             throw new RuntimeException();
         return optionalFacility.get();
     }
