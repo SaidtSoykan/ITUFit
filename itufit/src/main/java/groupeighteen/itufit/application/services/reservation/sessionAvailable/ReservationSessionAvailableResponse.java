@@ -8,6 +8,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class ReservationSessionAvailableResponse {
-    private Float occupancy;
     private Boolean isFull;
 }

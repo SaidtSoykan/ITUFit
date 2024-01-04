@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class Facility{
+public class Facility {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,4 +23,7 @@ public class Facility{
     private List<Reservation> reservations;
     @OneToMany(mappedBy = "facility")
     private List<Comment> comments;
+    public int getCalorie() {
+        return FacilityConstants.getCalorie(this.facilityType.toString());
+    }
 }

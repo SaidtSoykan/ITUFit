@@ -4,5 +4,5 @@ import groupeighteen.itufit.application.shared.response.IResponse;
 
 public interface MealService {
     
-    public IResponse fetchData();
+    double getCalorie();
 }

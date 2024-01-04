@@ -48,15 +48,15 @@ public class ReservationServiceImp implements ReservationService {
 
         String[] dateParts = dateString.split("-");
         String[] timeParts = timeString.split(":");
-        
+
         Integer year = Integer.valueOf(dateParts[0]);
         Integer month = Integer.valueOf(dateParts[1]);
         Integer day = Integer.valueOf(dateParts[2]);
         Integer hour = Integer.valueOf(timeParts[0]);
-        
+
         LocalDateTime localDateTime = LocalDateTime.of(
-            year, month, day, hour, 0, 0, 0);
-        
+                year, month, day, hour, 0, 0, 0);
+
         List<Reservation> reservations = reservationRepository.findByStartTimeAndFacilityId(localDateTime, reservationMakeRequest.getFacilityId());
         // if(reservations.isEmpty())
         //     throw new RuntimeException("");
@@ -78,7 +78,7 @@ public class ReservationServiceImp implements ReservationService {
         this.notificationService.createNotification(new CreateNotificationRequest(reservationToMake));
 
         studentService.increaseScore(reservationMakeRequest.getUserId());
-        
+
         var response = new DataResponse<Boolean>(
                 true,
                 "",
@@ -92,13 +92,13 @@ public class ReservationServiceImp implements ReservationService {
         var optionalReservation = reservationRepository.findById(reservationDeleteRequest.getReservationId());
         if (optionalReservation.isEmpty())
             throw new RuntimeException("");
-        
+
         Reservation reservationToDelete = optionalReservation.get();
 
         this.notificationService.deleteNotification(new DeleteNotificationRequest(reservationToDelete));
         reservationRepository.delete(reservationToDelete);
-        
-        
+
+
         studentService.decreaseScore(reservationDeleteRequest.getUserId());
         return new Response<>(true, "");
     }
@@ -110,14 +110,14 @@ public class ReservationServiceImp implements ReservationService {
 
     //     ReservationDeleteRequest reservationDeleteRequest = new ReservationDeleteRequest();
     //     reservationDeleteRequest.setId(reservationEditRequest.getOldId());
-        
+
     //     ReservationMakeRequest reservationMakeRequest = new ReservationMakeRequest();
     //     reservationMakeRequest.setStartTime(reservationEditRequest.getNewStartTime());
     //     reservationMakeRequest.setEndTime(reservationEditRequest.getNewEndTime());
     //     reservationMakeRequest.setFacilityId(reservationEditRequest.getFacilityId());
     //     reservationMakeRequest.setUserId(reservationEditRequest.getUserId());
 
-        
+
     //     if(make(reservationMakeRequest).getData())
     //         delete(reservationDeleteRequest);
     //     return new Response<>(true, "");
@@ -125,8 +125,6 @@ public class ReservationServiceImp implements ReservationService {
 
     public DataResponse<ReservationSessionAvailableResponse> sessionAvailable(ReservationSessionAvailableRequest reservationSessionAvailableRequest) {
         List<Reservation> reservations = reservationRepository.findByStartTimeAndFacilityId(reservationSessionAvailableRequest.getStartTime(), reservationSessionAvailableRequest.getFacilityId());
-        if (reservations.isEmpty())
-            throw new RuntimeException("");
 
         Integer capacity = facilityService.findById(reservationSessionAvailableRequest.getFacilityId()).getCapacity();
         Integer reservationCount = reservations.size();
@@ -134,29 +132,35 @@ public class ReservationServiceImp implements ReservationService {
         if (reservationCount > capacity)
             throw new RuntimeException("");
 
-        Float occupancy = (float) reservationCount / capacity;
-        Boolean isFull;
-
-        if (occupancy == 1)
-            isFull = true;
-        else
-            isFull = false;
+        Boolean isFull = reservationCount == capacity;
 
         var response = new DataResponse<ReservationSessionAvailableResponse>(
                 true,
                 "",
-                new ReservationSessionAvailableResponse(occupancy, isFull));
+                new ReservationSessionAvailableResponse(isFull));
 
         return response;
     }
 
-    public IDataResponse<List<ReservationListResponse>> list(ReservationListRequest reservationListRequest){
+    public boolean isSessionAvailable(Long facilityId, LocalDateTime startTime) {
+        List<Reservation> reservations = reservationRepository.findByStartTimeAndFacilityId(startTime, facilityId);
+
+        Integer capacity = facilityService.findById(facilityId).getCapacity();
+        Integer reservationCount = reservations.size();
+
+        if (reservationCount > capacity)
+            return false;
+
+        return true;
+    }
+
+    public IDataResponse<List<ReservationListResponse>> list(ReservationListRequest reservationListRequest) {
 
         Student student = studentService.findById(reservationListRequest.getUserId());
         List<Reservation> reservations = reservationRepository.findByStudent(student);
         List<ReservationListResponse> reservationIds = new ArrayList<>();
 
-        for(Reservation reservation: reservations){
+        for (Reservation reservation : reservations) {
             reservation.getStartTime();
 
             ReservationListResponse aReservation = new ReservationListResponse(reservation.getId(), reservation.getFacility().getFacilityType(), reservation.getStartTime());
