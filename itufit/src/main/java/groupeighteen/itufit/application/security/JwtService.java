@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -17,7 +18,8 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    public static final String SECRET = "supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123supersecretkey123";
+    @Value("${ITUFIT_JWT_SECRET_KEY}")
+    private String SECRET;
 
     public String generateToken(String userName) {
         Map<String, Object> claims = new HashMap<>();
