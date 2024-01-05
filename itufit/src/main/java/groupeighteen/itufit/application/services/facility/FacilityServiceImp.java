@@ -29,10 +29,6 @@ public class FacilityServiceImp implements FacilityService {
     }
 
     public IResponse add(FacilityAddRequest facilityAddRequest) {
-        // var optionalFacility = facilityRepository.findByFacilityType(facilityAddRequest.getFacilityType());
-        // if(optionalFacility.isPresent())
-        //     throw new RuntimeException("");
-
         Facility facilityToAdd = new Facility();
 
         facilityToAdd.setCapacity(facilityAddRequest.getCapacity());

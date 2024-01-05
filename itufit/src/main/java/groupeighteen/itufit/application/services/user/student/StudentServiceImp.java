@@ -47,31 +47,29 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
 
     public IDataResponse<StudentLoginResponse> login(StudentLoginRequest studentLoginRequest) {
         var optionalStudent = studentRepository.findByEmail(studentLoginRequest.getEmail());
-        if (optionalStudent.isEmpty()){
+        if (optionalStudent.isEmpty()) {
             var response = new DataResponse<StudentLoginResponse>(
                     false,
                     "Email or password incorrect!",
-                    new StudentLoginResponse(null, null) );
-                    return response;
+                    new StudentLoginResponse(null, null));
+            return response;
         }
 
         var student = optionalStudent.get();
         var hashedPassword = hashService.hashPassword(studentLoginRequest.getPassword(), student.getPasswordSalt());
         if (Arrays.equals(hashedPassword, student.getPasswordHash())) {
-            // StudentLoginResponse tokenResponse = new StudentLoginResponse();
-            // tokenResponse.setJwtToken(jwtService.generateToken(student.getEmail()));
-            // tokenResponse.setUserId(student.getId());
+
             var response = new DataResponse<StudentLoginResponse>(
                     true,
                     "",
-                    new StudentLoginResponse(jwtService.generateToken(student.getEmail()), student.getId()) );
+                    new StudentLoginResponse(jwtService.generateToken(student.getEmail()), student.getId()));
 
             return response;
         }
         var response = new DataResponse<StudentLoginResponse>(
-                    false,
-                    "Email or password incorrect!",
-                    new StudentLoginResponse(null, null) );
+                false,
+                "Email or password incorrect!",
+                new StudentLoginResponse(null, null));
         return response;
     }
 
@@ -92,17 +90,17 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         return new Response<>(true, "");
     }
 
-    public IDataResponse<StudentGetPhysicalInfoRespond> getPhysicalInfo(StudentGetPhysicalInfoRequest studentGetPhysicalInfoRequest){
+    public IDataResponse<StudentGetPhysicalInfoRespond> getPhysicalInfo(StudentGetPhysicalInfoRequest studentGetPhysicalInfoRequest) {
         Long id = studentGetPhysicalInfoRequest.getUserId();
         Student student = this.findById(id);
 
         var response = new DataResponse<StudentGetPhysicalInfoRespond>(
-                    true,
-                    "Physical Info returned",
-                    new StudentGetPhysicalInfoRespond(  student.getWeight(),
-                                                        student.getGoalWeight(),
-                                                        student.getHeight(),
-                                                        student.getBasalMetabolism()));
+                true,
+                "Physical Info returned",
+                new StudentGetPhysicalInfoRespond(student.getWeight(),
+                        student.getGoalWeight(),
+                        student.getHeight(),
+                        student.getBasalMetabolism()));
         return response;
     }
 
@@ -123,38 +121,39 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         return new Response<>(true, "");
     }
 
-    public DataResponse<List<StudentRankingResponse>> listRankings(){
+    public DataResponse<List<StudentRankingResponse>> listRankings() {
         // List<Student> students = studentRepository.findTop10ByOrderExerciseScoreDesc();
         List<Student> students = studentRepository.findAll(Sort.by(Sort.Direction.DESC, "exerciseScore"));
 
-        List<StudentRankingResponse> rankingResponses = new ArrayList<>(); 
+        List<StudentRankingResponse> rankingResponses = new ArrayList<>();
         Integer i = 0;
-        for(Student student:students){
-            
+        for (Student student : students) {
+
             StudentRankingResponse aStudent = new StudentRankingResponse(student.getFirstName(), student.getExerciseScore());
             rankingResponses.add(aStudent);
             i++;
-            if(i == 7){
+            if (i == 7) {
                 break;
             }
         }
-        
+
         var response = new DataResponse<List<StudentRankingResponse>>(true, "", rankingResponses);
         return response;
     }
-    public IResponse restrict(StudentRestrictRequest studentRestrictRequest){
+
+    public IResponse restrict(StudentRestrictRequest studentRestrictRequest) {
         Student student = this.findById(studentRestrictRequest.getId());
         student.setRestricted(!student.isRestricted());
         studentRepository.save(student);
-        return new Response<>(true, "User is restricted");        
+        return new Response<>(true, "User is restricted");
     }
 
-    public DataResponse<List<StudentListRestrictedResponse>> listRestrict(){
+    public DataResponse<List<StudentListRestrictedResponse>> listRestrict() {
         List<Student> students = studentRepository.findAll();
         List<StudentListRestrictedResponse> responseStudents = new ArrayList<>();
 
-        for(Student student:students){
-            if(student.isRestricted()){
+        for (Student student : students) {
+            if (student.isRestricted()) {
                 StudentListRestrictedResponse aResponse = new StudentListRestrictedResponse(student.getId(), student.getFirstName(), student.getLastName());
                 responseStudents.add(aResponse);
             }
@@ -164,7 +163,7 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         return response;
     }
 
-    public DataResponse<List<StudentSearchResponse>> search(StudentSearchRequest studentSearchRequest){
+    public DataResponse<List<StudentSearchResponse>> search(StudentSearchRequest studentSearchRequest) {
         String fullName = studentSearchRequest.getName();
         String[] names = fullName.split(" ");
         String firstName = names[0];
@@ -176,27 +175,28 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         Student selectedSudent = new Student();
         Boolean isFound = false;
 
-        for(Student student:students){
-            if(student.getLastName().equals(lastName)){
+        for (Student student : students) {
+            if (student.getLastName().equals(lastName)) {
                 selectedSudent = student;
                 isFound = true;
                 break;
             }
         }
 
-        StudentSearchResponse aResponse = new StudentSearchResponse(selectedSudent.getId(),selectedSudent.getFirstName(), selectedSudent.getLastName());
+        StudentSearchResponse aResponse = new StudentSearchResponse(selectedSudent.getId(), selectedSudent.getFirstName(), selectedSudent.getLastName());
         responseStudents.add(aResponse);
-        
+
         var response = new DataResponse<List<StudentSearchResponse>>(isFound, "", responseStudents);
         return response;
     }
-    public void increaseScore(Long id){
+
+    public void increaseScore(Long id) {
         Student student = this.findById(id);
         student.setExerciseScore(student.getExerciseScore() + 2);
         studentRepository.save(student);
     }
 
-    public void decreaseScore(Long id){
+    public void decreaseScore(Long id) {
         Student student = this.findById(id);
         student.setExerciseScore(student.getExerciseScore() - 2);
         studentRepository.save(student);
@@ -221,7 +221,7 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         if (!Objects.equals(studentPasswordChangeRequest.getNewPassword(), studentPasswordChangeRequest.getNewPasswordConfirmation()))
             throw new RuntimeException("sifreler ayni degil");
         var student = this.findById(studentPasswordChangeRequest.getUserId());
-        //var oldPasswordSalt = hashService.saltPassword(studentPasswordChangeRequest.getOldPassword());
+
         var oldPasswordSalt = student.getPasswordSalt();
         var oldPasswordHash = hashService.hashPassword(studentPasswordChangeRequest.getOldPassword(), oldPasswordSalt);
         if (!Arrays.equals(oldPasswordHash, student.getPasswordHash()))

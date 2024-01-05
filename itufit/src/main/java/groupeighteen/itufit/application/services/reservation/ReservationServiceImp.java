@@ -8,12 +8,10 @@ import groupeighteen.itufit.application.services.notification.delete.DeleteNotif
 import groupeighteen.itufit.application.services.reservation.sessionAvailable.ReservationSessionAvailableRequest;
 import groupeighteen.itufit.application.services.reservation.sessionAvailable.ReservationSessionAvailableResponse;
 import groupeighteen.itufit.application.services.reservation.make.ReservationMakeRequest;
-import groupeighteen.itufit.application.services.reservation.edit.ReservationEditRequest;
 import groupeighteen.itufit.application.services.reservation.list.ReservationListRequest;
 import groupeighteen.itufit.application.services.reservation.list.ReservationListResponse;
 import groupeighteen.itufit.application.services.reservation.delete.ReservationDeleteRequest;
 import groupeighteen.itufit.application.services.user.student.StudentService;
-// import groupeighteen.itufit.application.services.user.student.login.StudentLoginResponse;
 import groupeighteen.itufit.application.shared.response.DataResponse;
 import groupeighteen.itufit.application.shared.response.IDataResponse;
 import groupeighteen.itufit.application.shared.response.IResponse;
@@ -58,8 +56,6 @@ public class ReservationServiceImp implements ReservationService {
                 year, month, day, hour, 0, 0, 0);
 
         List<Reservation> reservations = reservationRepository.findByStartTimeAndFacilityId(localDateTime, reservationMakeRequest.getFacilityId());
-        // if(reservations.isEmpty())
-        //     throw new RuntimeException("");
 
         Integer capacity = facilityService.findById(reservationMakeRequest.getFacilityId()).getCapacity();
         if (reservations.size() >= capacity)
@@ -100,28 +96,8 @@ public class ReservationServiceImp implements ReservationService {
 
 
         studentService.decreaseScore(reservationDeleteRequest.getUserId());
-        return new Response<>(true, "");
+        return new Response(true, "");
     }
-
-    // public IResponse edit(ReservationEditRequest reservationEditRequest){
-    //     var optionalReservation = reservationRepository.findById(reservationEditRequest.getOldId());
-    //     if(optionalReservation.isEmpty())
-    //         throw new RuntimeException("");
-
-    //     ReservationDeleteRequest reservationDeleteRequest = new ReservationDeleteRequest();
-    //     reservationDeleteRequest.setId(reservationEditRequest.getOldId());
-
-    //     ReservationMakeRequest reservationMakeRequest = new ReservationMakeRequest();
-    //     reservationMakeRequest.setStartTime(reservationEditRequest.getNewStartTime());
-    //     reservationMakeRequest.setEndTime(reservationEditRequest.getNewEndTime());
-    //     reservationMakeRequest.setFacilityId(reservationEditRequest.getFacilityId());
-    //     reservationMakeRequest.setUserId(reservationEditRequest.getUserId());
-
-
-    //     if(make(reservationMakeRequest).getData())
-    //         delete(reservationDeleteRequest);
-    //     return new Response<>(true, "");
-    // }
 
     public DataResponse<ReservationSessionAvailableResponse> sessionAvailable(ReservationSessionAvailableRequest reservationSessionAvailableRequest) {
         List<Reservation> reservations = reservationRepository.findByStartTimeAndFacilityId(reservationSessionAvailableRequest.getStartTime(), reservationSessionAvailableRequest.getFacilityId());
@@ -129,7 +105,7 @@ public class ReservationServiceImp implements ReservationService {
         Integer capacity = facilityService.findById(reservationSessionAvailableRequest.getFacilityId()).getCapacity();
         Integer reservationCount = reservations.size();
 
-        if (reservationCount > capacity)
+        if (reservationCount == capacity)
             throw new RuntimeException("");
 
         Boolean isFull = reservationCount == capacity;
@@ -148,7 +124,7 @@ public class ReservationServiceImp implements ReservationService {
         Integer capacity = facilityService.findById(facilityId).getCapacity();
         Integer reservationCount = reservations.size();
 
-        if (reservationCount > capacity)
+        if (reservationCount == capacity)
             return false;
 
         return true;
