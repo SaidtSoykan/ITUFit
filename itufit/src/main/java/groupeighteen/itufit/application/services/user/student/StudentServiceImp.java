@@ -184,7 +184,7 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
             }
         }
 
-        StudentSearchResponse aResponse = new StudentSearchResponse(selectedSudent.getId(),fullName);
+        StudentSearchResponse aResponse = new StudentSearchResponse(selectedSudent.getId(),selectedSudent.getFirstName(), selectedSudent.getLastName());
         responseStudents.add(aResponse);
         
         var response = new DataResponse<List<StudentSearchResponse>>(isFound, "", responseStudents);

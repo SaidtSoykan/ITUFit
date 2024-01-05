@@ -9,5 +9,6 @@ import lombok.Setter;
 @Setter
 public class StudentSearchResponse {
     Long id;
-    String name;
+    String firstName;
+    String lastName;
 }
