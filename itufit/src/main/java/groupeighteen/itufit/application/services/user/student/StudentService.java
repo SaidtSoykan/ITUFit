@@ -9,10 +9,12 @@ import groupeighteen.itufit.application.services.user.student.physicalinfo.Stude
 import groupeighteen.itufit.application.services.user.student.physicalinfo.StudentSetPhysicalInfoRequest;
 import groupeighteen.itufit.application.services.user.student.ranking.StudentRankingResponse;
 import groupeighteen.itufit.application.services.user.student.register.StudentRegisterRequest;
+
 import groupeighteen.itufit.application.services.user.student.restrict.StudentListRestrictedResponse;
 import groupeighteen.itufit.application.services.user.student.restrict.StudentRestrictRequest;
 import groupeighteen.itufit.application.services.user.student.search.StudentSearchRequest;
 import groupeighteen.itufit.application.services.user.student.search.StudentSearchResponse;
+
 import groupeighteen.itufit.application.shared.response.DataResponse;
 import groupeighteen.itufit.application.shared.response.IDataResponse;
 import groupeighteen.itufit.application.shared.response.IResponse;
@@ -27,6 +29,8 @@ public interface StudentService {
     IResponse changePassword(StudentPasswordChangeRequest studentPasswordChangeRequest);
     void decreaseScore(Long id);
     void increaseScore(Long id);
+    //public DataResponse<List<StudentRankingResponse>> listRankings();
+
     DataResponse<List<StudentRankingResponse>> listRankings();
     IResponse restrict(StudentRestrictRequest studentRestrictRequest);
     DataResponse<List<StudentListRestrictedResponse>> listRestrict();

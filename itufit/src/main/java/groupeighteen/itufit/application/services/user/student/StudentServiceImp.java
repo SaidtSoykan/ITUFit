@@ -11,6 +11,7 @@ import groupeighteen.itufit.application.services.user.student.physicalinfo.Stude
 import groupeighteen.itufit.application.services.user.student.physicalinfo.StudentSetPhysicalInfoRequest;
 import groupeighteen.itufit.application.services.user.student.ranking.StudentRankingResponse;
 import groupeighteen.itufit.application.services.user.student.register.StudentRegisterRequest;
+
 import groupeighteen.itufit.application.services.user.student.restrict.StudentListRestrictedResponse;
 import groupeighteen.itufit.application.services.user.student.restrict.StudentRestrictRequest;
 import groupeighteen.itufit.application.services.user.student.search.StudentSearchRequest;
@@ -141,7 +142,6 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         var response = new DataResponse<List<StudentRankingResponse>>(true, "", rankingResponses);
         return response;
     }
-
     public IResponse restrict(StudentRestrictRequest studentRestrictRequest){
         Student student = this.findById(studentRestrictRequest.getId());
         student.setRestricted(!student.isRestricted());
@@ -190,7 +190,6 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         var response = new DataResponse<List<StudentSearchResponse>>(isFound, "", responseStudents);
         return response;
     }
-
     public void increaseScore(Long id){
         Student student = this.findById(id);
         student.setExerciseScore(student.getExerciseScore() + 2);
@@ -222,6 +221,7 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         if (!Objects.equals(studentPasswordChangeRequest.getNewPassword(), studentPasswordChangeRequest.getNewPasswordConfirmation()))
             throw new RuntimeException("sifreler ayni degil");
         var student = this.findById(studentPasswordChangeRequest.getUserId());
+        //var oldPasswordSalt = hashService.saltPassword(studentPasswordChangeRequest.getOldPassword());
         var oldPasswordSalt = student.getPasswordSalt();
         var oldPasswordHash = hashService.hashPassword(studentPasswordChangeRequest.getOldPassword(), oldPasswordSalt);
         if (!Arrays.equals(oldPasswordHash, student.getPasswordHash()))

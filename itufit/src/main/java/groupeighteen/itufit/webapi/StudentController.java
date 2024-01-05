@@ -21,7 +21,8 @@ import groupeighteen.itufit.domain.user.Student;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
-
+//import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.RequestBody;
 
 
 
@@ -54,7 +55,6 @@ public class StudentController {
     public IResponse changePassword(@RequestBody StudentPasswordChangeRequest studentPasswordChangeRequest) {
         return studentService.changePassword(studentPasswordChangeRequest);
     }
-
     @PostMapping(value = "getPhysicalInfo", produces = "application/json")
     public IDataResponse<StudentGetPhysicalInfoRespond> getPhysicalInfo(@RequestBody StudentGetPhysicalInfoRequest studentGetPhysicalInfoRequest) {
         return studentService.getPhysicalInfo(studentGetPhysicalInfoRequest);
