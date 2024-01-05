@@ -8,16 +8,21 @@ import groupeighteen.itufit.application.services.user.student.physicalinfo.Stude
 import groupeighteen.itufit.application.services.user.student.physicalinfo.StudentSetPhysicalInfoRequest;
 import groupeighteen.itufit.application.services.user.student.ranking.StudentRankingResponse;
 import groupeighteen.itufit.application.services.user.student.register.StudentRegisterRequest;
+import groupeighteen.itufit.application.services.user.student.restrict.StudentListRestrictedResponse;
+import groupeighteen.itufit.application.services.user.student.restrict.StudentRestrictRequest;
+import groupeighteen.itufit.application.services.user.student.search.StudentSearchRequest;
+import groupeighteen.itufit.application.services.user.student.search.StudentSearchResponse;
 import groupeighteen.itufit.application.services.user.student.StudentService;
 import groupeighteen.itufit.application.shared.response.DataResponse;
 import groupeighteen.itufit.application.shared.response.IDataResponse;
 import groupeighteen.itufit.application.shared.response.IResponse;
+import groupeighteen.itufit.domain.user.Student;
 
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+//import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.RequestBody;
 
 
 
@@ -50,7 +55,6 @@ public class StudentController {
     public IResponse changePassword(@RequestBody StudentPasswordChangeRequest studentPasswordChangeRequest) {
         return studentService.changePassword(studentPasswordChangeRequest);
     }
-    
     @PostMapping(value = "getPhysicalInfo", produces = "application/json")
     public IDataResponse<StudentGetPhysicalInfoRespond> getPhysicalInfo(@RequestBody StudentGetPhysicalInfoRequest studentGetPhysicalInfoRequest) {
         return studentService.getPhysicalInfo(studentGetPhysicalInfoRequest);
@@ -61,4 +65,18 @@ public class StudentController {
         return studentService.listRankings();
     }
     
+    @PostMapping(value = "restrict", produces = "application/json")
+    public IResponse restrict(@RequestBody StudentRestrictRequest studentRestrictRequest){
+        return studentService.restrict(studentRestrictRequest);
+    }
+
+    @PostMapping(value = "listRestricted", produces = "application/json")
+    public DataResponse<List<StudentListRestrictedResponse>> listRestrict() {
+        return studentService.listRestrict();
+    }
+
+    @PostMapping(value = "search", produces = "application/json")
+    public DataResponse<List<StudentSearchResponse>> search(@RequestBody StudentSearchRequest studentSearchRequest) {
+        return studentService.search(studentSearchRequest);
+    }
 }

@@ -11,6 +11,11 @@ import groupeighteen.itufit.application.services.user.student.physicalinfo.Stude
 import groupeighteen.itufit.application.services.user.student.physicalinfo.StudentSetPhysicalInfoRequest;
 import groupeighteen.itufit.application.services.user.student.ranking.StudentRankingResponse;
 import groupeighteen.itufit.application.services.user.student.register.StudentRegisterRequest;
+
+import groupeighteen.itufit.application.services.user.student.restrict.StudentListRestrictedResponse;
+import groupeighteen.itufit.application.services.user.student.restrict.StudentRestrictRequest;
+import groupeighteen.itufit.application.services.user.student.search.StudentSearchRequest;
+import groupeighteen.itufit.application.services.user.student.search.StudentSearchResponse;
 import groupeighteen.itufit.application.shared.response.DataResponse;
 import groupeighteen.itufit.application.shared.response.IDataResponse;
 import groupeighteen.itufit.application.shared.response.IResponse;
@@ -137,7 +142,54 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         var response = new DataResponse<List<StudentRankingResponse>>(true, "", rankingResponses);
         return response;
     }
+    public IResponse restrict(StudentRestrictRequest studentRestrictRequest){
+        Student student = this.findById(studentRestrictRequest.getId());
+        student.setRestricted(!student.isRestricted());
+        studentRepository.save(student);
+        return new Response<>(true, "User is restricted");        
+    }
 
+    public DataResponse<List<StudentListRestrictedResponse>> listRestrict(){
+        List<Student> students = studentRepository.findAll();
+        List<StudentListRestrictedResponse> responseStudents = new ArrayList<>();
+
+        for(Student student:students){
+            if(student.isRestricted()){
+                StudentListRestrictedResponse aResponse = new StudentListRestrictedResponse(student.getId(), student.getFirstName(), student.getLastName());
+                responseStudents.add(aResponse);
+            }
+        }
+
+        var response = new DataResponse<List<StudentListRestrictedResponse>>(true, "", responseStudents);
+        return response;
+    }
+
+    public DataResponse<List<StudentSearchResponse>> search(StudentSearchRequest studentSearchRequest){
+        String fullName = studentSearchRequest.getName();
+        String[] names = fullName.split(" ");
+        String firstName = names[0];
+        String lastName = names[1];
+        List<StudentSearchResponse> responseStudents = new ArrayList<>();
+
+
+        List<Student> students = studentRepository.findAllByFirstName(firstName);
+        Student selectedSudent = new Student();
+        Boolean isFound = false;
+
+        for(Student student:students){
+            if(student.getLastName().equals(lastName)){
+                selectedSudent = student;
+                isFound = true;
+                break;
+            }
+        }
+
+        StudentSearchResponse aResponse = new StudentSearchResponse(selectedSudent.getId(),fullName);
+        responseStudents.add(aResponse);
+        
+        var response = new DataResponse<List<StudentSearchResponse>>(isFound, "", responseStudents);
+        return response;
+    }
     public void increaseScore(Long id){
         Student student = this.findById(id);
         student.setExerciseScore(student.getExerciseScore() + 2);
@@ -169,7 +221,8 @@ public class StudentServiceImp implements UserDetailsService, StudentService {
         if (!Objects.equals(studentPasswordChangeRequest.getNewPassword(), studentPasswordChangeRequest.getNewPasswordConfirmation()))
             throw new RuntimeException("sifreler ayni degil");
         var student = this.findById(studentPasswordChangeRequest.getUserId());
-        var oldPasswordSalt = hashService.saltPassword(studentPasswordChangeRequest.getOldPassword());
+        //var oldPasswordSalt = hashService.saltPassword(studentPasswordChangeRequest.getOldPassword());
+        var oldPasswordSalt = student.getPasswordSalt();
         var oldPasswordHash = hashService.hashPassword(studentPasswordChangeRequest.getOldPassword(), oldPasswordSalt);
         if (!Arrays.equals(oldPasswordHash, student.getPasswordHash()))
             throw new RuntimeException("old password wrong");
